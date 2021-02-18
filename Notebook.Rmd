@@ -1,0 +1,136 @@
+---
+title: "Early Effectiveness of Coronavirus Vaccine"
+output: html_notebook
+---
+
+# Background
+
+```{r setup, echo=F}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+require(tidyverse)
+require(lubridate)
+
+```
+
+The coronavirus vaccine is expected to be 60-89% effective during the third week following vaccination. Over 80% of over 80 year old patients had received their first vaccination by XXXX. We would therefore expect that the infection rate in the period 14 to 21 days later should be 60-89% **lower** than the rate for other age groups, where a lower proportion have been vaccinated.
+
+# Method
+
+Reported coronavirus cases by geographic location (local authority) and age where downloaded from the [government website](https://coronavirus.data.gov.uk/downloads/demographic/cases/specimenDate_ageDemographic-unstacked.csv). Data was then aggregated to the whole of England.
+
+```{r}
+# Download file from gov.uk
+download.file ("https://coronavirus.data.gov.uk/downloads/demographic/cases/specimenDate_ageDemographic-unstacked.csv", "casedata.csv", mode="wb")
+
+# Read data into R
+caseData <- read_csv("casedata.csv")
+
+# Select just the case data for whole of England
+caseData %>%
+    filter(areaName == "England")  %>%
+    filter(date > as.Date("2020-09-01")) %>%
+    group_by(week = floor(interval(as.Date("2020-01-30"), date)/dweeks())) %>%
+    summarise(`all` = sum(`newCasesBySpecimenDate-0_59`+`newCasesBySpecimenDate-60+`),
+              `80+` = sum(`newCasesBySpecimenDate-80_84`+`newCasesBySpecimenDate-85_89`+`newCasesBySpecimenDate-90+`)) -> caseDataEng
+
+ggplot(data = caseDataEng, aes(x = week, y= (`80+`/`all`))) +
+    theme(text=element_text(family="Garamond", size=14)) +
+    geom_col() +
+    scale_y_continuous(breaks = seq(0, 0.8, .025),
+                     labels = scales::percent, 
+                     limits = c(0, .08))+
+        scale_x_continuous(breaks = seq(0, 100, 2),
+                     limits = c(25, 70))+
+    labs(
+        x= "Number of Weeks since first UK coronavirus case",
+        y= "Percentage of all cases in same week",
+        title = "Coronovirus cases in patients over 80 years of age",
+        subtitle = "Proportion of all cases in same week within England")+
+    
+# Label Start of Vaccination Campaign
+ geom_curve(
+    x = floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks())-5, 
+    y = 0.075,
+    xend = floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks()), 
+    yend = 0.065,
+    lineend = "round",
+    size = 1, 
+    arrow = arrow(length = unit(0.3, "cm")),
+    colour = "#EC7014",
+    curvature = -0.5
+  ) +
+    
+ geom_text(
+     x=floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks())-5.5, 
+     y= 0.075, 
+     label ="Vaccination starts", colour="#EC7014", hjust=1) +
+ 
+# Label 3 weeks after start of campaign (i.e. start of immunity)   
+ geom_curve(
+    x = floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks())-2,
+    y = 0.08,
+    xend = floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks())+3, 
+    yend = 0.05,
+    lineend = "round",
+    size = 1, 
+    arrow = arrow(length = unit(0.3, "cm")),
+    colour = "#EC7014",
+    curvature = -0.5
+  ) +
+    
+ geom_text(
+     x=floor(interval(as.Date("2020-01-30"), as.Date("2020-12-08"))/dweeks())-2.5, 
+     y= 0.08, 
+     label ="3 weeks after vaccination starts", colour="#EC7014", hjust=1) +
+
+# Label 60% vaccination reached
+ geom_curve(
+    x = floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks())+5,
+    y = 0.075,
+    xend = floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks()), 
+    yend = 0.065,
+    lineend = "round",
+    size = 1, 
+    arrow = arrow(length = unit(0.3, "cm")),
+    colour = "darkgreen",
+    curvature = 0.5
+  ) +
+    
+ geom_text(
+     x=floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks())+5.5, 
+     y= 0.075, 
+     label ="60% of over\n80s vaccinated", colour="darkgreen", hjust=0) +
+    
+# Label 3 weeks after 60% vaccination reached
+ geom_curve(
+    x = floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks())+8,
+    y = 0.055,
+    xend = floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks())+3, 
+    yend = 0.045,
+    lineend = "round",
+    size = 1, 
+    arrow = arrow(length = unit(0.3, "cm")),
+    colour = "darkgreen",
+    curvature = 0.5
+  ) +
+    
+ geom_text(
+     x=floor(interval(as.Date("2020-01-30"), as.Date("2021-01-17"))/dweeks())+8.5, 
+     y= 0.055, 
+     label ="3 weeks after 60%\nvaccinated", colour="darkgreen", hjust=0) +
+    theme_bw()
+    
+        
+meanValue <- mean(caseDataEng$`80+`/caseDataEng$all)
+```
+
+The average percent of all cases in England which were in patients over 80 years of age, since August 2020 is `r scales::percent(meanValue, accuracy = 0.01)` .
+
+Vaccination data was downloaded from [NHS England's website](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/). ONS estimates the population of England to be X and the population over 80 years of age to be 2,836,964[ONS]. Detailed data by region was downloaded from the [ONS Website](https://www.ons.gov.uk/visualisations/dvc845/poppyramids/pyramids/datadownload.xlsx). At 17th January, 1,684,673 first doses of coronavirus vaccine had been given to the population over 80 years of age (approximately 60% of all the potential patients over 80).
+
+```{r}
+
+download.file ("https://www.england.nhs.uk/statistics/wp-content/uploads/sites/2/2021/01/COVID-19-weekly-announced-vaccinations-21-January-2021.xlsx", "vaccinedata.csv", mode="wb")
+```
+
+Assuming 70% vaccine efficacy, with 60% of the cohort populated, we would anticipate the number of cases would fall by half (${{(100-70)} \over { 60} }= {30 \over 60}= 0.5$), placing the expected infection rate at `r scales::percent(0.5* meanValue, accuracy = 0.01)`
