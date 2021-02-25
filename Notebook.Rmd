@@ -124,6 +124,7 @@ ggplot(data = caseDataEng, aes(x = week, y= (`80+`/`all`))) +
 meanValue <- mean(caseDataEng$`80+`/caseDataEng$all)
 ```
 
+
 The average percent of all cases in England which were in patients over 80 years of age, since August 2020 is `r scales::percent(meanValue, accuracy = 0.01)` .
 
 Vaccination data was downloaded from [NHS England's website](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/). ONS estimates the population of England to be X and the population over 80 years of age to be 2,836,964[ONS]. Detailed data by region was downloaded from the [ONS Website](https://www.ons.gov.uk/visualisations/dvc845/poppyramids/pyramids/datadownload.xlsx). At 17th January, 1,684,673 first doses of coronavirus vaccine had been given to the population over 80 years of age (approximately 60% of all the potential patients over 80).
@@ -134,3 +135,12 @@ download.file ("https://www.england.nhs.uk/statistics/wp-content/uploads/sites/2
 ```
 
 Assuming 70% vaccine efficacy, with 60% of the cohort populated, we would anticipate the number of cases would fall by half (${{(100-70)} \over { 60} }= {30 \over 60}= 0.5$), placing the expected infection rate at `r scales::percent(0.5* meanValue, accuracy = 0.01)`
+
+Create a graph of rates of change (time for infection rate to half) for Over 80, 70-79 and Under 70.  In December (recovering from second wave), the 80+ group declined half as quickly as the Under 70's and 70-79 year olds.
+
+```{r}
+source("Vaccinedata.R")
+p
+```
+
+In January, with vaccination prioritised in the Over 80's, infection rate is keeping pace with (or perhaps better than) the younger (less vaccinated) populations.
