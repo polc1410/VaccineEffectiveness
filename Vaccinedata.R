@@ -74,7 +74,7 @@ halfLives %>%
 
 # Add some points to the plot
 
-p +
+p <- p +
     geom_point(data=halfLivesLines, aes(x=date, y=Rolling_average, colour=Age))+
    geom_segment(data=halfLivesLines, 
                 aes(x=date, 
@@ -84,7 +84,9 @@ p +
                     colour=Age), linetype = "dashed") +
     geom_text(data=halfLivesLabels[halfLivesLabels$Age!="80+_roll",], aes(x=date+3, y=next_Rolling_average, label=paste(round(Rolling_average.x,0), "days"), colour=Age), size=2.8, angle=45, check_overlap = T, hjust=1, show.legend = FALSE ) +
     geom_text(data=halfLivesLabels[halfLivesLabels$Age=="80+_roll",], aes(x=date+3, y=Rolling_average.y, label=paste(round(Rolling_average.x,0), "days"), colour=Age), size=2.8, angle=45, check_overlap = T, hjust=0, show.legend = FALSE)
-    
+
+p
+
 halfLives %>%
     select(date, contains("half")) -> tableContent
 
@@ -101,7 +103,7 @@ flextable()%>%
     align(align = "center", part = "header")%>%
     set_caption("Time taken (in days) for current weekly average case rate to fall by half, based on the decline in cases over the next 7 day period.")
 
-
+ggsave("Rplot.png", plot=p)
 
 
 
