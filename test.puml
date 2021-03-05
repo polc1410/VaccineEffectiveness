@@ -1,1 +1,40 @@
+@startuml
+<style>
+note {
+  LineColor black
+  FontSize 10
+  }
+activity {
+  LineColor black
+  .red {
+    LineColor red
+    LineThickness 5
+  }
+    .orange {
+    LineColor orange
+    LineThickness 5
+  }
+    .green {
+    LineColor lawngreen
+    LineThickness 5
+    }
+}
+legend {
+  FontSize 10
+}
+</style>
+skinparam wrapWidth 150
+skinparam Padding 8
+skinparam ConditionEndStyle hline
+' skinparam monochrome true
+skinparam ArrowColor black
+
+           
+            <<Red>>:Refer]
+    
+            <<Orange>>:Discuss]
+
+            <<green>>:Offer]
+
+@enduml
 
