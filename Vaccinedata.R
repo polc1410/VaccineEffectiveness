@@ -38,7 +38,7 @@ p <- ggplot()+
     scale_color_jco() +
     geom_line(data=graphData, aes(x=date, y=Rolling_average, group=Age, colour=Age ), size=1)+
     labs(y="Number of new daily cases (Log Scale)") +
-    scale_y_log10(limits=c(100,60000))+
+    scale_y_log10(limits=c(10,60000))+
     theme_classic() +
     labs(title ="Rolling average new cases over previous 7 days", 
          subtitle="in England, with projected time (days) for new infections to half", 
@@ -83,8 +83,7 @@ p <- p +
                     yend = next_Rolling_average, 
                     colour=Age), linetype = "dashed") +
     geom_text(data=halfLivesLabels[halfLivesLabels$Age!="80+_roll",], aes(x=date+3, y=next_Rolling_average, label=paste(round(Rolling_average.x,0), "days"), colour=Age), size=2.8, angle=45, check_overlap = T, hjust=1, show.legend = FALSE ) +
-    geom_text(data=halfLivesLabels[halfLivesLabels$Age=="80+_roll",], aes(x=date+3, y=Rolling_average.y, label=paste(round(Rolling_average.x,0), "days"), colour=Age), size=2.8, angle=45, check_overlap = T, hjust=0, show.legend = FALSE)
-
+    geom_text(data=halfLivesLabels[halfLivesLabels$Age=="80+_roll",], aes(x=date+3, y=Rolling_average.y, label=paste(round(Rolling_average.x,0), "days"), colour=Age), size=2.8, angle=45, check_overlap = T, hjust=0, show.legend = FALSE) 
 p
 
 halfLives %>%

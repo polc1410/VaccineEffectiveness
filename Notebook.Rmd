@@ -129,7 +129,7 @@ The average percent of all cases in England which were in patients over 80 years
 
 Vaccination data was downloaded from [NHS England's website](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/). ONS estimates the population of England to be X and the population over 80 years of age to be 2,836,964[ONS]. Detailed data by region was downloaded from the [ONS Website](https://www.ons.gov.uk/visualisations/dvc845/poppyramids/pyramids/datadownload.xlsx). At 17th January, 1,684,673 first doses of coronavirus vaccine had been given to the population over 80 years of age (approximately 60% of all the potential patients over 80).
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 
 download.file ("https://www.england.nhs.uk/statistics/wp-content/uploads/sites/2/2021/01/COVID-19-weekly-announced-vaccinations-21-January-2021.xlsx", "vaccinedata.csv", mode="wb")
 ```
@@ -141,6 +141,7 @@ Create a graph of rates of change (time for infection rate to half) for Over 80,
 ```{r}
 source("Vaccinedata.R")
 p
+ggsave("Rplot.png", p)
 ```
 
 In January, with vaccination prioritised in the Over 80's, infection rate is keeping pace with (or perhaps better than) the younger (less vaccinated) populations.
